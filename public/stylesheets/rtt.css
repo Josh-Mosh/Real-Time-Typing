@@ -1,0 +1,13 @@
+body {
+	background-color: #EEEEEE;
+}
+
+.box {
+	vertical-align: top;
+	background-color: #DDDDDD;
+	display: inline-block;
+	height: 200px;
+	width: 200px;
+	margin: 10px;
+	padding: 10px;
+}

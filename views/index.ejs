@@ -1,0 +1,62 @@
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" type="text/css" href="stylesheets/style.css">
+    <link rel="stylesheet" type="text/css" href="stylesheets/rtt.css">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script>
+     io = io.connect('http://localhost:3000');
+     var name = prompt('What is your name?');
+     $(document).ready(function(){
+
+      io.on('existing_users', function(users){
+        // console.log(users);
+        // console.log(session_data);
+        for( i in users )
+        {
+         $('body').append("<div id='"+users[i].id+"' class='box'><p>"+users[i].name+"</p></div>");
+        }
+      });
+
+      io.emit('got_a_new_user', {name: name});
+
+      io.on('show_self', function(user){
+        console.log('got here!!!');
+        console.log(user);
+        $('body').append("<div class='box'><p>"+user.name+"</p><textarea id='"+user.id+"' class='message' msg_id='"+user.id+"'></textarea></div>");
+      })
+
+      $(document).on('focusout', '.message', function(){
+        var message = $('.message').val();
+        var id = $('.message').attr('msg_id');
+        var msg = {message: message, id: id};
+        console.log(msg);
+        io.emit('updated_text', msg);
+      })
+
+      io.on('show_message', function(message){
+        console.log('got here!');
+        console.log(message);
+        // ('#'+message.id).css("background_color"+message.message+"</p>");
+        $('#'+message.id).append("<p>"+message.message+"</p>");
+      })
+
+      io.on('new_user', function(user){
+        $('body').append("<div style='display:none' id='"+user.id+"' class='box'><p>"+user.name+"</p></div>");
+        $('#'+user.id).fadeIn();
+      })
+
+      io.on('disconnect_user', function(id){
+        $("#"+id).fadeOut(300, function(){
+          $(this).remove();
+        }); 
+      })
+     })
+
+    </script>
+  </head>
+  <body>
+    <h2>Real Time Typing</h2>
+  </body>
+</html>
