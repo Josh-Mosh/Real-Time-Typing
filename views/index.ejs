@@ -15,19 +15,18 @@
         // console.log(session_data);
         for( i in users )
         {
-         $('body').append("<div id='"+users[i].id+"' class='box'><p>"+users[i].name+"</p></div>");
+         $('body').append("<div id='"+users[i].id+"' class='box'><p>"+users[i].name+"</p><div class='msg' ></div></div>");
         }
       });
 
       io.emit('got_a_new_user', {name: name});
 
       io.on('show_self', function(user){
-        console.log('got here!!!');
         console.log(user);
         $('body').append("<div class='box'><p>"+user.name+"</p><textarea id='"+user.id+"' class='message' msg_id='"+user.id+"'></textarea></div>");
       })
 
-      $(document).on('focusout', '.message', function(){
+      $(document).on('keyup', '.message', function(){
         var message = $('.message').val();
         var id = $('.message').attr('msg_id');
         var msg = {message: message, id: id};
@@ -36,14 +35,13 @@
       })
 
       io.on('show_message', function(message){
-        console.log('got here!');
         console.log(message);
         // ('#'+message.id).css("background_color"+message.message+"</p>");
-        $('#'+message.id).append("<p>"+message.message+"</p>");
+        $('#'+message.id).children('.msg').html("<p>"+message.message+"</p>");
       })
 
       io.on('new_user', function(user){
-        $('body').append("<div style='display:none' id='"+user.id+"' class='box'><p>"+user.name+"</p></div>");
+        $('body').append("<div style='display:none' id='"+user.id+"' class='box'><p>"+user.name+"</p><div class='msg' ></div></div>");
         $('#'+user.id).fadeIn();
       })
 
